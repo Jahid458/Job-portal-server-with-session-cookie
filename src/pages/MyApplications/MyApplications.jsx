@@ -1,15 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import useAuth from '../../hooks/useAuth';
+import axios from 'axios';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 
 const MyApplications = () => {
     const { user } = useAuth();
     const [jobs, setJobs] = useState([]);
+    const [loading,setLoading]= useState(true);
+
+    const axiosSecure  = useAxiosSecure();
 
     useEffect(() => {
-        fetch(`http://localhost:5000/job-application?email=${user.email}`)
-            .then(res => res.json())
-            .then(data => setJobs(data))
+        // fetch(`https://job-portal-server-for-recruiter-part3-psi-vert.vercel.app/job-application?email=${user.email}`)
+        //     .then(res => res.json())
+        //     .then(data => setJobs(data))
+
+        // axios.get(`https://job-portal-server-for-recruiter-part3-psi-vert.vercel.app/job-application?email=${user.email}`,{
+        //     withCredentials: true
+        // })
+        // .then(res => setJobs(res.data))
+        axiosSecure.get(`job-application?email=${user.email}`)
+        .then(res => {
+        
+            setJobs(res.data)
+            setLoading(false)
+        })
+        
+
     }, [user.email])
+
+    if(loading){
+        return <h1>Loading.......</h1>
+    }
 
     return (
         <div>
